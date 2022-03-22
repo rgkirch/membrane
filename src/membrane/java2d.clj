@@ -274,10 +274,7 @@
               (.setFont ^Graphics2D *g* font))
             (doseq [line lines]
               (.translate ^Graphics2D *g* ^double (double 0.0) ^double (double (dec line-height)))
-              (.drawString ^Graphics2D *g* ^String line 0 0))
-            ))
-          
-          )))
+              (.drawString ^Graphics2D *g* ^String line 0 0)))))))
 
 
 
