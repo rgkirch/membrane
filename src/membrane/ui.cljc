@@ -446,7 +446,7 @@
 (defrecord Label [text font]
     IOrigin
     (-origin [_]
-        [0 0]))
+      [0 0]))
 
 (defn label
   "Graphical elem that can draw text.
