@@ -232,10 +232,6 @@
         (doseq [drawable (:drawables this)]
             (draw drawable))))))
 
-
-
-
-
 (defn text-bounds [font text]
   (let [lines (clojure.string/split text #"\n" -1)
         frc (get-font-render-context)
