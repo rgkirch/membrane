@@ -246,8 +246,7 @@
                         (.getWidth ^java.awt.geom.Rectangle2D rect2d)))
                     lines)
         maxx (reduce max 0 widths)
-        maxy (* (dec line-height)
-                (count lines))]
+        maxy (* height (count lines))]
     [maxx maxy]))
 
 (defrecord LabelRaw [text font]
