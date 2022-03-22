@@ -15,6 +15,7 @@
            java.awt.Font
            java.awt.Toolkit
            java.awt.font.FontRenderContext
+           java.awt.font.TextLayout
            java.awt.RenderingHints
            java.awt.GraphicsEnvironment
            java.awt.Graphics2D
