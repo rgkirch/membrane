@@ -102,26 +102,12 @@
         metrics (.getLineMetrics ^Font jfont s frc)]
     (.getHeight metrics)))
 
-(defn font-metrics [font]
-
-  ;; You can get font metrics from the default toolkit,
-  ;; the integer return type is too coarse
-  #_(let [font-metrics (.getFontMetrics (Toolkit/getDefaultToolkit)
-                                      (get-java-font font))]
-    ;; these are all integers instead of floats >:/
-      {:ascent (.getAscent font-metrics)
-     :descent (.getDescent font-metrics)
-     :leading (.getLeading font-metrics)
-     :line-height (.getHeight font-metrics)
-     :max-advance (.getMaxAdvance font-metrics)
-     :max-ascent (.getMaxAscent font-metrics)
-     :max-descent (.getMaxDescent font-metrics)
-     :uniform-line-metrics (.hasUniformLineMetrics font-metrics)})
-  (let [frc (get-font-render-context)
-        jfont (get-java-font font)
-        ;; I don't think the characters matter here
-        s ""
-        metrics (.getLineMetrics ^Font jfont s frc)]
+(defn font-metrics
+  [{:keys [font jfont text frc]
+    :or {text ""
+         frc (get-font-render-context)
+         jfont (get-java-font font)}}]
+  (let [metrics (.getLineMetrics ^Font jfont text frc)]
     {:ascent (.getAscent metrics)
      :descent (.getDescent metrics)
      :leading (.getLeading metrics)
@@ -234,15 +220,12 @@
         (doseq [drawable (:drawables this)]
             (draw drawable))))))
 
-(defn text-bounds [font text]
+(defn text-bounds [jfont text]
   (let [lines (clojure.string/split text #"\n" -1)
         frc (get-font-render-context)
-        metrics (.getLineMetrics ^Font font text frc)
-        line-height (.getHeight metrics)
-        
-        
+        {:keys [height leading]} (font-metrics {:jfont jfont :text text :frc frc})
         widths (map (fn [line]
-                      (let [rect2d (.getStringBounds ^Font font line frc)]
+                      (let [rect2d (.getStringBounds ^Font jfont line frc)]
                         (.getWidth ^java.awt.geom.Rectangle2D rect2d)))
                     lines)
         maxx (reduce max 0 widths)
@@ -997,7 +980,7 @@
 
     tk/IToolkitFontMetrics
     (font-metrics [toolkit font]
-      (font-metrics font))
+      (font-metrics {:font font}))
 
     tk/IToolkitFontAdvanceX
     (font-advance-x [toolkit font s]
