@@ -131,23 +131,23 @@
   keys:
 
   `:width`
-  float 	getLineWidth()
+  float getLineWidth()
   Returns the line width.
 
   `:cap`
-  int 	getEndCap()
+  int getEndCap()
   Returns the end cap style.
 
   `:join`
-  int 	getLineJoin()
+  int getLineJoin()
   Returns the line join style.
 
   `:miter-limit`
-  float 	getMiterLimit()
+  float getMiterLimit()
   Returns the limit of miter joins.
 
   `:dash`
-  float[] 	getDashArray()
+  float[] getDashArray()
   Returns the array representing the lengths of the dash segments.
 
   `:dash-phase`
