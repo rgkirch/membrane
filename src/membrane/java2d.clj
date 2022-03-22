@@ -248,7 +248,6 @@
                 (count lines))]
     [maxx maxy]))
 
-
 (defrecord LabelRaw [text font]
     IBounds
     (-bounds [_]
