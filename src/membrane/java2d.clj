@@ -252,7 +252,7 @@
 (defrecord LabelRaw [text font]
     IBounds
     (-bounds [_]
-        (let [[maxx maxy] (text-bounds (get-java-font font)
+      (let [[maxx maxy] (text-bounds (get-java-font font)
                                                  text)
               maxx (max 0 maxx)
               maxy (max 0 maxy)]
