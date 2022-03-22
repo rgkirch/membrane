@@ -123,7 +123,8 @@
         metrics (.getLineMetrics ^Font jfont s frc)]
     {:ascent (.getAscent metrics)
      :descent (.getDescent metrics)
-     :leading (.getLeading metrics)}))
+     :leading (.getLeading metrics)
+     :height (.getHeight metrics)}))
 
 (defn merge-stroke
   "Create a new java.awt.BasicStroke with the non properties replaced.
