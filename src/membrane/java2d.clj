@@ -1,6 +1,7 @@
 (ns membrane.java2d
   (:require [membrane.ui :as ui
-             :refer [IBounds
+             :refer [IOrigin
+                     IBounds
                      bounds
                      origin]]
             [membrane.toolkit :as tk])
@@ -223,7 +224,7 @@
 (defn text-bounds [jfont text]
   (let [lines (clojure.string/split text #"\n" -1)
         frc (get-font-render-context)
-        {:keys [height leading]} (font-metrics {:jfont jfont :text text :frc frc})
+        {:keys [height]} (font-metrics {:jfont jfont :text text :frc frc})
         widths (map (fn [line]
                       (let [rect2d (.getStringBounds ^Font jfont line frc)]
                         (.getWidth ^java.awt.geom.Rectangle2D rect2d)))
@@ -232,43 +233,50 @@
         maxy (* height (count lines))]
     [maxx maxy]))
 
+(def text-ascent
+  ^{:arglists ([jfont])}
+  (memoize (fn [jfont]
+             (:ascent (font-metrics {:jfont jfont
+                                     :text ""
+                                     :frc (get-font-render-context)})))))
+
 (defrecord LabelRaw [text font]
-    IBounds
-    (-bounds [_]
-      (let [[maxx maxy] (text-bounds (get-java-font font)
-                                                 text)
-              maxx (max 0 maxx)
-              maxy (max 0 maxy)]
-          [maxx maxy]))
+  IOrigin
+  (-origin [_] [0
+                (text-ascent (get-java-font font))])
+  
+  IBounds
+  (-bounds [_]
+    (let [jfont (get-java-font font)
+          maxx (max 0 (first (text-bounds jfont text)))
+          maxy (max 0 (text-ascent jfont))]
+      [maxx maxy]))
 
-    IDraw
-    (draw [this]
-        (let [lines (clojure.string/split (:text this) #"\n" -1)
-              font (get-java-font (:font this))
-              frc (get-font-render-context)
-              metrics (.getLineMetrics ^Font font text frc)
-              line-height (.getHeight metrics)
-
-]
-          (push-transform
-           (push-font
-           
-            (when font
-              (.setFont ^Graphics2D *g* font))
-            (doseq [line lines]
-              (.translate ^Graphics2D *g* ^double (double 0.0) ^double (double (dec line-height)))
-              (.drawString ^Graphics2D *g* ^String line 0 0)))))))
-
-
+  IDraw
+  (draw [this]
+    (prn this)
+    (let [lines (clojure.string/split (:text this) #"\n" -1)
+          jfont (get-java-font (:font this))
+          frc (get-font-render-context)
+          metrics (.getLineMetrics ^Font jfont text frc)
+          line-height (.getHeight metrics)
+          ox ^double (double (ui/origin-x this))
+          oy ^double (double (ui/origin-y this))]
+      (push-transform
+       (push-font
+        (.translate ^Graphics2D *g* ox oy)
+        (when jfont
+          (.setFont ^Graphics2D *g* jfont))
+        (doseq [line lines]
+          (.drawString ^Graphics2D *g* ^String line 0 0)
+          (.translate ^Graphics2D *g* ^double (double 0.0) ^double (double line-height))))))))
 
 (extend-type membrane.ui.Label
   IBounds
   (-bounds [this]
-    (let [[maxx maxy] (text-bounds (get-java-font (:font this))
-                                             (:text this))
-          maxx (max 0 maxx)
-          maxy (max 0 maxy)]
-      [maxx maxy]))
+    (ui/bounds
+     (LabelRaw. (:text this)
+                (:font this))))
   IDraw
   (draw [this]
     (draw (LabelRaw. (:text this)
