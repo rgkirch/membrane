@@ -15,7 +15,9 @@
 (defn font
   "Creates a font.
 
-  `name`: Should be the path to a font file on desktop. If nil, use the default font.
+  `name`: Should be the path to a font file on desktop. If nil, use the default
+  font.
+
   `size`: Size of the font. If nil, use the default font size."
   [name size]
   (Font. (if name
@@ -96,7 +98,9 @@
 (defprotocol IBubble
   "Allows an element add, remove, modify effects emitted from its children."
   (-bubble [_ effects]
-    "Called when an effect is being emitted by a child element. The parent element can either return the same effects or allow them to continue to bubble."))
+    "Called when an effect is being emitted by a child element. The parent
+    element can either return the same effects or allow them to continue to
+    bubble."))
 
 (extend-type nil
   IKeyPress
@@ -451,8 +455,8 @@
 (defn label
   "Graphical elem that can draw text.
 
-  label will use the default line spacing for newline.
-  font should be a membrane.ui.Font"
+  Label will use the default line spacing for newline. Font should be a
+  membrane.ui.Font"
   ([text]
    (label (str text) default-font))
   ([text font]
@@ -627,49 +631,47 @@
 
 
 (defrecord Translate [x y drawable]
-    IOrigin
-    (-origin [this]
-        [x y])
+  IOrigin
+  (-origin [this]
+    [x y])
 
-    IMakeNode
-    (make-node [this childs]
-      (assert (= (count childs) 1))
-      (Translate. x y (first childs)))
+  IMakeNode
+  (make-node [this childs]
+    (assert (= (count childs) 1))
+    (Translate. x y (first childs)))
 
   IChildren
   (-children [this]
-      [drawable])
+    [drawable])
 
   IBounds
   (-bounds [this]
-      (let [[w h] (bounds drawable)
-            [ox oy] (origin drawable)]
-        [(+ w ox)
-         (+ h oy)])))
+    (bounds drawable)))
 
 (defn translate
-  "A graphical elem that will shift drawable's origin by x and y and draw it at its new origin."
+  "A graphical elem that will shift drawable's origin by x and y and draw it at
+  its new origin."
   [x y drawable]
   (Translate. x y drawable))
 
 
 (defrecord Rotate [degrees drawable]
-    IOrigin
-    (-origin [this]
-        [0 0])
+  IOrigin
+  (-origin [this]
+    [0 0])
 
-    IMakeNode
-    (make-node [this childs]
-      (assert (= (count childs) 1))
-      (Rotate. degrees (first childs)))
+  IMakeNode
+  (make-node [this childs]
+    (assert (= (count childs) 1))
+    (Rotate. degrees (first childs)))
 
   IChildren
   (-children [this]
-      [drawable])
+    [drawable])
 
   IBounds
   (-bounds [this]
-      (bounds drawable)))
+    (bounds drawable)))
 
 (defn- rotate [degrees drawable]
   (Rotate. degrees drawable))
